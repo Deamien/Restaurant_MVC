@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LAB2_HT2024", "LAB2_HT2024\LAB2_HT2024.csproj", "{6A0D60D6-CED5-4001-9C1E-29CB208F1D29}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LAB1_HT2024", "..\Restaurant_API\LAB1_HT2024\LAB1_HT2024.csproj", "{76BF1EE3-DDA1-42CE-BCAA-1711AF059384}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{6A0D60D6-CED5-4001-9C1E-29CB208F1D29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A0D60D6-CED5-4001-9C1E-29CB208F1D29}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A0D60D6-CED5-4001-9C1E-29CB208F1D29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76BF1EE3-DDA1-42CE-BCAA-1711AF059384}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76BF1EE3-DDA1-42CE-BCAA-1711AF059384}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76BF1EE3-DDA1-42CE-BCAA-1711AF059384}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76BF1EE3-DDA1-42CE-BCAA-1711AF059384}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

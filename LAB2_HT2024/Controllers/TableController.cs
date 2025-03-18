@@ -21,10 +21,16 @@ namespace LAB2_HT2024.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var response = await _client.GetAsync($"{baseUrl}api/Table/all");
-
             var token = HttpContext.Request.Cookies["jwtToken"];
+
+            if (string.IsNullOrEmpty(token))
+            {
+                TempData["Error"] = "Unauthorized: No token found,";
+                return RedirectToAction("Index");
+            }
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _client.GetAsync($"{baseUrl}api/Table/all");
 
             var json = await response.Content.ReadAsStringAsync();
 
@@ -39,6 +45,12 @@ namespace LAB2_HT2024.Controllers
         {
 
             var token = HttpContext.Request.Cookies["jwtToken"];
+
+            if (string.IsNullOrEmpty(token))
+            {
+                TempData["Error"] = "Unauthorized: No token found,";
+                return RedirectToAction("Index");
+            }
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
             var response = await _client.GetAsync($"{baseUrl}/api/Table/GetTableById/{TableId}");
@@ -51,32 +63,61 @@ namespace LAB2_HT2024.Controllers
 
             return View(table);
 
-            [HttpPost]
-            public async Task<IActionResult> Delete(int TableId)
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int TableId)
+        {
+            var token = HttpContext.Request.Cookies["jwtToken"];
+
+            if (string.IsNullOrEmpty(token))
+            {
+                TempData["Error"] = "Unauthorized: No token found,";
+                return RedirectToAction("Index");
+            }
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _client.DeleteAsync($"{baseUrl}/api/Table/delete/{TableId}");
+
+            if (!response.IsSuccessStatusCode)
             {
 
-
-
+                TempData["Error"] = "Failed to delete the table.";
+                return RedirectToAction("Index");
             }
 
-            [HttpPut]
-            public async Task<IActionResult> Update(int TableId)
+
+            TempData["Success"] = "Table deleted successfully.";
+            return RedirectToAction("Index");
+        }
+
+
+        [HttpPut]
+        public async Task<IActionResult> Update(int TableId)
+        {
+            var token = HttpContext.Request.Cookies["jwtToken"];
+
+            if (string.IsNullOrEmpty(token))
             {
-
-
+                TempData["Error"] = "Unauthorized: No token found,";
+                return RedirectToAction("Index");
             }
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        }
 
-            [HttpPost]
-            public async Task<IActionResult> Add()
+        [HttpPost]
+        public async Task<IActionResult> Add()
+        {
+
+            var token = HttpContext.Request.Cookies["jwtToken"];
+
+            if (string.IsNullOrEmpty(token))
             {
-
-                var token = HttpContext.Request.Cookies["jwtToken"];
-                _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
+                TempData["Error"] = "Unauthorized: No token found,";
+                return RedirectToAction("Index");
             }
-
-
-
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token); token);
 
         }
     }
+}

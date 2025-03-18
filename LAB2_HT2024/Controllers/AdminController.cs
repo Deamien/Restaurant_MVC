@@ -6,7 +6,7 @@ namespace LAB2_HT2024.Controllers
     {
         private readonly HttpClient _client;
 
-        private string baseUri = "https://localhost:7194";
+        private string baseUrl = "https://localhost:7194";
 
         public AdminController(HttpClient client)
         {

@@ -1,14 +1,16 @@
 ﻿using LAB2_HT2024.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace LAB2_HT2024.Controllers
 {
+    [Authorize]
     public class MenuController : Controller
     {
         private readonly HttpClient _client;
 
-        private string baseUri = "https://localhost:7194";
+        private string baseUrl = "https://localhost:7194";
 
         public MenuController(HttpClient client)
         {

@@ -19,7 +19,7 @@ namespace LAB2_HT2024.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var response = await _client.GetAsync($"{baseUri}api/Menu");
+            var response = await _client.GetAsync($"{baseUrl}api/Menu");
 
             var json = await response.Content.ReadAsStringAsync();
 

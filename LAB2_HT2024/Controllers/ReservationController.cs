@@ -8,7 +8,7 @@ namespace LAB2_HT2024.Controllers
         {
         private readonly HttpClient _client;
 
-        private string baseUrl = "https://localhost:7194";
+        private readonly string baseUrl = "https://localhost:7194";
 
         public ReservationController(HttpClient client)
             {
@@ -17,11 +17,11 @@ namespace LAB2_HT2024.Controllers
 
         public async Task<IActionResult> Index()
             {
-            var token = HttpContext.Request.Cookies["jwtToken"];
+            var token = HttpContext.Request.Cookies["JwtToken"];
 
             if (string.IsNullOrEmpty(token))
                 {
-                TempData["Error"] = "Unauthorized: No token found,";
+                TempData["Error"] = "Unauthorized: No token found.";
                 return RedirectToAction("Index");
                 }
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);

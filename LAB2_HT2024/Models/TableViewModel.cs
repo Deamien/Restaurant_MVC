@@ -2,7 +2,7 @@
 {
     public class TableViewModel
     {
-        public int Id { get; set; }
+        public int TableId { get; set; }
 
         //[DisplayName("Seats")]
         public int Seats { get; set; }

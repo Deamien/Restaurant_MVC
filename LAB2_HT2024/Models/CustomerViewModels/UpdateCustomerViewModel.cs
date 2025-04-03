@@ -1,37 +1,32 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace LAB2_HT2024.Models
+namespace LAB1_HT2024.Models.DTOs.CustomerDTOs
 {
-    public class ReservationViewModel
+    public class UpdateCustomerViewModel
     {
-        [Required(ErrorMessage = "Fältet kan inte vara tomt")]
-        [DisplayName("Antal personer")]
-        public int groupSize { get; set; }
-
-        [Required(ErrorMessage = "Please Choose a table")]
-        [DisplayName("Available Tables:")]
-        public int TableId { get; set; }
+        [Key]
+        public int CustomerId { get; set; }
 
         [Required(ErrorMessage = "Enter your first name")]
         [DisplayName("First Name:")]
+        [StringLength(30, ErrorMessage = "First name cannot be longer than 30 characters.")]
         public string firstName { get; set; }
 
         [Required(ErrorMessage = "Enter your last name")]
         [DisplayName("Last Name:")]
+        [StringLength(30, ErrorMessage = "Last name cannot be longer than 30 characters.")]
         public string lastName { get; set; }
+
+        [Required(ErrorMessage = "Email is required")]
+        [DisplayName("Email:")]
+        [EmailAddress(ErrorMessage = "Enter a valid Email")]
+        public string emailAddress { get; set; }
 
         [Required(ErrorMessage = "Phone Number is required")]
         [DisplayName("Phone Number:")]
         [Phone]
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Enter a valid Phone number")]
         public string phoneNumber { get; set; }
-
-        [DisplayName("Reservation Starts (Date&Time)")]
-        public DateTime reservationStart { get; set; }
-
-        [DisplayName("Reservation Ends (Date&Time)")]
-        public DateTime reservationEnd { get; set; }
     }
 }
-

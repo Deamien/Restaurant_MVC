@@ -1,4 +1,4 @@
-﻿using LAB2_HT2024.Models;
+﻿ using LAB2_HT2024.Models.CustomerViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -10,7 +10,7 @@ namespace LAB2_HT2024.Controllers
     {
         private readonly HttpClient _client;
 
-        private string baseUrl = "https://localhost:7194";
+        private readonly string baseUrl = "https://localhost:7194";
 
         public CustomerController(HttpClient client)
         {
@@ -25,7 +25,7 @@ namespace LAB2_HT2024.Controllers
             //Producerar en temporär error message om token är tom.
             if (string.IsNullOrEmpty(token))
             {
-                TempData["Error"] = "Unauthorized: No token found,";
+                TempData["Error"] = "Unauthorized: No token found.";
                 return RedirectToAction("Index");
             }
 
@@ -43,6 +43,29 @@ namespace LAB2_HT2024.Controllers
             var customerList = JsonConvert.DeserializeObject<List<CustomerViewModel>>(json);
 
             return View(customerList);
+        }
+
+        public async Task<IActionResult> DeleteCustomer(int CustomerId)
+        {
+            var token = HttpContext.Request.Cookies["´JwtToken"];
+
+            if (string.IsNullOrEmpty(token))
+            {
+                TempData["Error"] = "Unauthorized: No token found.";
+                return RedirectToAction("Index");
+            }
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            
+            var response = await _client.DeleteAsync($"{baseUrl}/api/Customer/add");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["Success"] = $"Customer:{CustomerId} deleted successfully.";
+                return RedirectToAction("Index");
+            }
+
+            ModelState.AddModelError("", $"Failed to delete {CustomerId} with status {response.StatusCode}.");
+            return View("");
         }
     }
 }

@@ -1,16 +1,19 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace LAB2_HT2024.Models
+namespace LAB2_HT2024.Models.CustomerViewModels
+
 {
-    public class CustomerViewModel
+    public class AddCustomerViewModel
     {
         [Required(ErrorMessage = "Enter your first name")]
-        [DisplayName("First Name")]
+        [DisplayName("First Name:")]
+        [StringLength(30, ErrorMessage = "First name cannot be longer than 30 characters.")]
         public string firstName { get; set; }
 
         [Required(ErrorMessage = "Enter your last name")]
-        [DisplayName("Last Name")]
+        [DisplayName("Last Name:")]
+        [StringLength(30, ErrorMessage = "Last name cannot be longer than 30 characters.")]
         public string lastName { get; set; }
 
         [Required(ErrorMessage = "Email is required")]

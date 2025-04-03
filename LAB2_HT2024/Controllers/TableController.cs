@@ -22,11 +22,11 @@ namespace LAB2_HT2024.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var token = HttpContext.Request.Cookies["jwtToken"];
+            var token = HttpContext.Request.Cookies["JwtToken"];
 
             if (string.IsNullOrEmpty(token))
             {
-                TempData["Error"] = "Unauthorized: No token found,";
+                TempData["Error"] = "Unauthorized: No token found.";
                 return RedirectToAction("Index");
             }
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
@@ -40,79 +40,66 @@ namespace LAB2_HT2024.Controllers
             return View(tableList);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> DeleteTable(TableViewModel tableViewModel)
-        //{
-        //    var token = HttpContext.Request.Cookies["jwtToken"];
-
-        //    if (string.IsNullOrEmpty(token))
-        //    {
-        //        TempData["Error"] = "Unauthorized: No token found,";
-        //        return RedirectToAction("Index");
-        //    }
-        //    _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-
-        //    var response_1 = await _client.GetAsync($"{baseUrl}/api/Table/GetTableById/{tableViewModel.Id}");
-        //    var json_1 = await response_1.Content.ReadAsStringAsync();
-        //    var table = JsonConvert.DeserializeObject<TableViewModel>(json_1);
-
-        //    if (table != null)
-        //    {
-        //        var json_2 = JsonConvert.SerializeObject(tableViewModel);
-        //        var response_2 = await _client.DeleteAsync($"{baseUrl}/api/Table/delete/{tableViewModel.Id}");
-        //    }
-
-        //    if (response_2.IsSuccessStatusCode)
-        //    {
-
-        //        TempData["Success"] = "Table deleted successfully.";
-        //        return RedirectToAction("Index");
-        //    }
-
-        //    ModelState.AddModelError("",$"Failed to delete {responsecontent} with status {response.StatusCode}.");
-        //    return RedirectToAction("Delete", new { TableId });
-
-        //}
-
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> DeleteTable(int TableId)
         {
-            var token = HttpContext.Request.Cookies["jwtToken"];
-
+            var token = HttpContext.Request.Cookies["JwtToken"];
             if (string.IsNullOrEmpty(token))
             {
-                TempData["Error"] = "Unauthorized: No token found,";
+                TempData["Error"] = "Unauthorized: No token found.";
                 return RedirectToAction("Index");
             }
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-
-            var response = await _client.DeleteAsync($"{baseUrl}/api/Table/delete/{TableId}");
-
-            if (response.IsSuccessStatusCode)
+            var response = await _client.GetAsync($"{baseUrl}/api/Table/{TableId}");
+            if (!response.IsSuccessStatusCode)
             {
-                TempData["Success"] = $"Table:{TableId} deleted successfully.";
+                TempData["Error"] = $"Failed to fetch table with ID {TableId}.";
                 return RedirectToAction("Index");
             }
+            var json = await response.Content.ReadAsStringAsync();
+            var table = JsonConvert.DeserializeObject<TableViewModel>(json);
+            return View("DeleteTable", table);
+        }
 
-            ModelState.AddModelError("", $"Failed to delete {TableId} with status {response.StatusCode}.");
-            return View(new { TableId });
+        [HttpPost]
+        public async Task<IActionResult> DeleteTable(TableViewModel tableViewModel)
+        {
+            var token = HttpContext.Request.Cookies["JwtToken"];
+            if (string.IsNullOrEmpty(token))
+            {
+                TempData["Error"] = "Unauthorized: No token found.";
+                return RedirectToAction("Index");
+            }
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _client.DeleteAsync($"{baseUrl}/api/Table/delete/{tableViewModel.TableId}");
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["Success"] = $"Successfully deleted Table:{tableViewModel.TableId}.";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                ModelState.AddModelError("", $"Failed to delete Table:{tableViewModel.TableId} with status:{response.StatusCode} and details:{responseContent}.");
+                return View("DeleteTable", tableViewModel);
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> UpdateTable(int TableId)
         {
-            var token = HttpContext.Request.Cookies["jwtToken"];
+            var token = HttpContext.Request.Cookies["JwtToken"];
 
             if (string.IsNullOrEmpty(token))
             {
-                TempData["Error"] = "Unauthorized: No token found,";
+                TempData["Error"] = "Unauthorized: No token found.";
                 return RedirectToAction("Index");
             }
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            var response = await _client.GetAsync($"{baseUrl}/api/Table/GetTableById/{TableId}");
+            var response = await _client.GetAsync($"{baseUrl}/api/Table/{TableId}");
             var json = await response.Content.ReadAsStringAsync();
             var table = JsonConvert.DeserializeObject<TableViewModel>(json);
 
@@ -122,12 +109,12 @@ namespace LAB2_HT2024.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateTable(TableViewModel tableViewModel)
         {
-            var token = HttpContext.Request.Cookies["jwtToken"];
+            var token = HttpContext.Request.Cookies["JwtToken"];
 
             if (string.IsNullOrEmpty(token))
             {
 
-                TempData["Error"] = "Unauthorized: No token found,";
+                TempData["Error"] = "Unauthorized: No token found.";
                 return RedirectToAction("Index");
 
             }
@@ -141,7 +128,7 @@ namespace LAB2_HT2024.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var updatedTableJson = JsonConvert.DeserializeObject<TableViewModel>(responsecontent);
-                TempData["Success"] = $"Successfully updated the {responsecontent}";
+                TempData["Success"] = $"Successfully updated TableId: {updatedTableJson.TableId }";
                 return RedirectToAction("Index");
             }
 
@@ -150,14 +137,15 @@ namespace LAB2_HT2024.Controllers
             return View(tableViewModel);
         }
 
+        
         [HttpPost]
         public async Task<IActionResult> AddTable(TableViewModel tableViewModel)
         {
-            var token = HttpContext.Request.Cookies["jwtToken"];
+            var token = HttpContext.Request.Cookies["JwtToken"];
 
             if (string.IsNullOrEmpty(token))
             {
-                TempData["Error"] = "Unauthorized: No token found,";
+                TempData["Error"] = "Unauthorized: No token found.";
                 return RedirectToAction("Index");
             }
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
@@ -166,16 +154,17 @@ namespace LAB2_HT2024.Controllers
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await _client.PostAsync($"{baseUrl}api/Table/add", content);
-            var responsecontent = await response.Content.ReadAsStringAsync();
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var addedTableJson = JsonConvert.DeserializeObject<TableViewModel>(responseContent);
 
             if (response.IsSuccessStatusCode)
             {
-                var addedTableJson = JsonConvert.DeserializeObject<TableViewModel>(responsecontent);
-                TempData["Success"] = $"Successfully updated the {responsecontent}";
+                
+                TempData["Success"] = $"Successfully added TableId:{addedTableJson.TableId}";
                 return RedirectToAction("Index");
             }
 
-            ModelState.AddModelError("", $"Failed to update {responsecontent} with status {response.StatusCode}.");
+            ModelState.AddModelError("", $"Failed to add TableID:{addedTableJson.TableId} with status:{response.StatusCode} and details:{responseContent}.");
             return View(tableViewModel);
         }
     }

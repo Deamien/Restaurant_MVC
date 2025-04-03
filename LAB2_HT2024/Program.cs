@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 namespace LAB2_HT2024
 {
     public class Program
@@ -6,8 +8,24 @@ namespace LAB2_HT2024
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddSession(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Admin/login";
+                });
+
+            builder.Services.AddAuthorization();
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddHttpClient();
 
             var app = builder.Build();
 
@@ -24,6 +42,7 @@ namespace LAB2_HT2024
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

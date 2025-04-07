@@ -5,14 +5,15 @@ namespace LAB2_HT2024.Models.ReservationViewModels
 {
     public class UpdateReservationViewModel
     {
+        [Required(ErrorMessage = "ReservationId cannot be empty")]
         public int ReservationId { get; set; }
-        
+
         [Required(ErrorMessage = "The field cannot be empty.")]
         [DisplayName("People:")]
         public int groupSize { get; set; }
-        
+
         public int CustomerId { get; set; }
-        
+
         [Required(ErrorMessage = "Please Choose a table")]
         [DisplayName("Available Tables:")]
         public int TableId { get; set; }

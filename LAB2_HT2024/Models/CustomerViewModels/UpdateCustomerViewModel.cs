@@ -5,7 +5,7 @@ namespace LAB1_HT2024.Models.DTOs.CustomerDTOs
 {
     public class UpdateCustomerViewModel
     {
-        [Key]
+        [Required]
         public int CustomerId { get; set; }
 
         [Required(ErrorMessage = "Enter your first name")]

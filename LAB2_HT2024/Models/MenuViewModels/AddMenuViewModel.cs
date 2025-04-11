@@ -3,19 +3,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LAB2_HT2024.Models.MenuViewModels
 {
-    public class MenuViewModel
+    public class AddMenuViewModel
     {
-        public int Id { get; set; }
-
-        [DisplayName("Dish Name:")]
+        [DisplayName("Dish:")]
         [Required]
-        public string Name { get; set; }
+        public string name { get; set; }
 
         [DisplayName("Price:")]
         [Required]
-        public int Price { get; set; }
+        public int price { get; set; }
 
         [Required]
-        public bool Available { get; set; }
+        public bool available { get; set; }
     }
 }

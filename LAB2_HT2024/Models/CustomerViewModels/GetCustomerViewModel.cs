@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LAB2_HT2024.Models.CustomerViewModels
 {
-    public class CustomerViewModel
+    public class GetCustomerViewModel
     {
         public int CustomerId { get; set; }
 

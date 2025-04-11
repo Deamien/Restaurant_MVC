@@ -14,9 +14,13 @@ namespace LAB2_HT2024.Controllers
         }
         public async Task<IActionResult> Login()
         {
-            var response = await _client.PostAsJsonAsync($"{baseUrl}/api/Admin/login);'
+            var response = await _client.PostAsJsonAsync($"{baseUrl}api/admin/login");
 
-            if(response.)
+            if(response.IsSuccessStatusCode)
+            {
+                TempData["Success"] = $"Successfully deleted dish:{a dmin.MenuItemId}.";
+                return RedirectToAction("Index");
+            }
 
         }
 

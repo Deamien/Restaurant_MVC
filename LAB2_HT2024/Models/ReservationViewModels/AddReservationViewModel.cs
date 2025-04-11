@@ -9,10 +9,10 @@ namespace LAB2_HT2024.Models.ReservationViewModels
         [DisplayName("People:")]
         public int groupSize { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "CustomerId is required")]
         public int CustomerId { get; set; }
 
-        [Required(ErrorMessage = "Please Choose a table")]
+        [Required(ErrorMessage = "TableId is required")]
         [DisplayName("Available Tables:")]
         public int TableId { get; set; }
 

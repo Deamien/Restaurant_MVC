@@ -6,12 +6,12 @@ namespace LAB2_HT2024.Models.CustomerViewModels
 {
     public class AddCustomerViewModel
     {
-        [Required(ErrorMessage = "Enter your first name")]
+        [Required(ErrorMessage = "First name is required")]
         [DisplayName("First Name:")]
         [StringLength(30, ErrorMessage = "First name cannot be longer than 30 characters.")]
         public string firstName { get; set; }
 
-        [Required(ErrorMessage = "Enter your last name")]
+        [Required(ErrorMessage = "Last name is required")]
         [DisplayName("Last Name:")]
         [StringLength(30, ErrorMessage = "Last name cannot be longer than 30 characters.")]
         public string lastName { get; set; }

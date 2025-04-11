@@ -1,4 +1,5 @@
 ﻿ using LAB2_HT2024.Models.CustomerViewModels;
+using LAB2_HT2024.Models.MenuViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -34,17 +35,18 @@ namespace LAB2_HT2024.Controllers
 
 
             //Hämtar alla Customers från API endpoint
-            var response = await _client.GetAsync($"{baseUrl}api/Customer");
+            var response = await _client.GetAsync($"{baseUrl}api/Customer/all");
 
             //Läser av json som en string
             var json = await response.Content.ReadAsStringAsync();
 
             //json blir deserialized för att bli till en object
-            var customerList = JsonConvert.DeserializeObject<List<CustomerViewModel>>(json);
+            var customerList = JsonConvert.DeserializeObject<List<GetCustomerViewModel>>(json);
 
             return View(customerList);
         }
 
+        [HttpGet]
         public async Task<IActionResult> DeleteCustomer(int CustomerId)
         {
             var token = HttpContext.Request.Cookies["´JwtToken"];
@@ -56,16 +58,52 @@ namespace LAB2_HT2024.Controllers
             }
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             
-            var response = await _client.DeleteAsync($"{baseUrl}/api/Customer/add");
+            var response = await _client.GetAsync($"{baseUrl}/api/Customer/add");
             
             if (response.IsSuccessStatusCode)
             {
-                TempData["Success"] = $"Customer:{CustomerId} deleted successfully.";
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var Customer = JsonConvert.DeserializeObject<GetCustomerViewModel>(responseContent);
+                
+                return View(Customer);
+            }
+            else
+            {
+                TempData["Error"] = $"Failed to fetch customer with id:{CustomerId} for deletion.";
+                
+                return RedirectToAction($"Index");
+            }
+                
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> DeleteCustomer(GetCustomerViewModel getCustomerViewModel)
+        {
+            var token = HttpContext.Request.Cookies["´JwtToken"];
+
+            if (string.IsNullOrEmpty(token))
+            {
+                TempData["Error"] = "Unauthorized: No token found.";
                 return RedirectToAction("Index");
             }
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            ModelState.AddModelError("", $"Failed to delete {CustomerId} with status {response.StatusCode}.");
-            return View("");
-        }
+            var response = await _client.DeleteAsync($"{baseUrl}/api/Customer/add");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var Customer = JsonConvert.DeserializeObject<GetCustomerViewModel>(responseContent);
+
+                TempData["Success"] = $"Successfully deleted customer:{getCustomerViewModel.CustomerId}.";
+                return RedirectToAction ("");
+            }
+            else
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                TempData["Error"] = $"Failed to delete customer with id:{getCustomerViewModel.CustomerId}, status:{response.StatusCode} and details:{responseContent}. for deletion.";
+                return RedirectToAction($"Index", new { CustomerId = getCustomerViewModel.CustomerId });
+            }
+        } 
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace LAB1_HT2024.Models.DTOs.CustomerDTOs
+namespace LAB2_HT2024.Models.CustomerViewModels
 {
     public class UpdateCustomerViewModel
     {

@@ -1,7 +1,10 @@
-﻿namespace LAB2_HT2024.Models.TableViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace LAB2_HT2024.Models.TableViewModels
 {
-    public class AddTableDTO
+    public class AddTableViewModel
     {
+        [Required(ErrorMessage = "Seats are required")]
         public int seats { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LAB2_HT2024.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LAB2_HT2024.Controllers
 {
@@ -12,18 +13,17 @@ namespace LAB2_HT2024.Controllers
         {
             _client = client;
         }
-        public async Task<IActionResult> Login()
+        public async Task<IActionResult> Login(AdminLoginViewModel adminLoginViewModel)
         {
-            var response = await _client.PostAsJsonAsync($"{baseUrl}api/admin/login");
+            var response = await _client.PostAsJsonAsync($"{baseUrl}api/admin/login", adminLoginViewModel);
 
-            if(response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                TempData["Success"] = $"Successfully deleted dish:{a dmin.MenuItemId}.";
+                TempData["Success"] = $"Successfully logged in as admin:{admin.MenuItemId}.";
                 return RedirectToAction("Index");
             }
 
         }
-
         public async Task<IActionResult> Logout();
     }
 }

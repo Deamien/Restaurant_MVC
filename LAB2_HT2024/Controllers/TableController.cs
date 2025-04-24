@@ -1,6 +1,4 @@
-﻿using LAB2_HT2024.Models;
-using LAB2_HT2024.Models.MenuViewModels;
-using LAB2_HT2024.Models.TableViewModels;
+﻿using LAB2_HT2024.Models.TableViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -58,13 +56,13 @@ namespace LAB2_HT2024.Controllers
             {
                 var responseContent = await response.Content.ReadAsStringAsync();
                 var table = JsonConvert.DeserializeObject<GetTableViewModel>(responseContent);
-                return View( table);
+                return View(table);
             }
-            else 
+            else
             {
                 TempData["Error"] = $"Failed to fetch table with ID {TableId}.";
                 return RedirectToAction("Index");
-            }  
+            }
         }
 
         [HttpPost]
@@ -105,14 +103,14 @@ namespace LAB2_HT2024.Controllers
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
             var response = await _client.GetAsync($"{baseUrl}/api/table/{TableId}");
-            
+
 
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
                 var table = JsonConvert.DeserializeObject<UpdateTableViewModel>(json);
                 TempData["Success"] = $"Successfully loaded table:{TableId}.";
-                
+
                 return View(table);
             }
             else
@@ -122,7 +120,7 @@ namespace LAB2_HT2024.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> UpdateTable(UpdateTableViewModel tableViewModel)
         {
             var token = HttpContext.Request.Cookies["JwtToken"];
@@ -144,16 +142,18 @@ namespace LAB2_HT2024.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var updatedTableJson = JsonConvert.DeserializeObject<UpdateTableViewModel>(responsecontent);
-                TempData["Success"] = $"Successfully updated TableId: {updatedTableJson.TableId }";
+                TempData["Success"] = $"Successfully updated TableId: {updatedTableJson.TableId}";
                 return RedirectToAction("Index");
             }
+            else
+            {
+                TempData["Error"] = $"Failed to update {responsecontent} with status {response.StatusCode}.";
 
-            ModelState.AddModelError("", $"Failed to update {responsecontent} with status {response.StatusCode}.");
-
-            return View(tableViewModel);
+                return RedirectToAction("UpdateTable", new { TableId = tableViewModel.TableId });
+            }
         }
 
-        
+
         [HttpPost]
         public async Task<IActionResult> AddTable(AddTableViewModel addTableViewModel)
         {
@@ -175,7 +175,7 @@ namespace LAB2_HT2024.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                
+
                 TempData["Success"] = $"Successfully added TableId:{addedTableJson.TableId}";
                 return RedirectToAction("Index");
             }

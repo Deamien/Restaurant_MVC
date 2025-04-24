@@ -1,5 +1,4 @@
-﻿using LAB2_HT2024.Models;
-using LAB2_HT2024.Models.ReservationViewModels;
+﻿using LAB2_HT2024.Models.ReservationViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -63,7 +62,7 @@ namespace LAB2_HT2024.Controllers
         }
 
 
-
+        [HttpGet]
         public async Task<IActionResult> UpdateReservation(int ReservationId)
         {
             var token = HttpContext.Request.Cookies["JwtToken"];
@@ -77,6 +76,7 @@ namespace LAB2_HT2024.Controllers
 
         }
 
+        [HttpPost]
         public async Task<IActionResult> UpdateReservation(UpdateReservationViewModel updateReservationViewModel)
         {
             var token = HttpContext.Request.Cookies["JwtToken"];
@@ -88,6 +88,7 @@ namespace LAB2_HT2024.Controllers
             }
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
+            var response = await _client.
         }
 
         public async Task<IActionResult> AddReservation(AddReservationViewModel addReservationViewModel)

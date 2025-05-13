@@ -1,5 +1,4 @@
-﻿using LAB2_HT2024.Models.CustomerViewModels;
-using LAB2_HT2024.Models.TableViewModels;
+﻿using LAB2_HT2024.Models.TableViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -115,7 +114,7 @@ namespace LAB2_HT2024.Controllers
             {
                 var json = await response.Content.ReadAsStringAsync();
                 var table = JsonConvert.DeserializeObject<UpdateTableViewModel>(json);
-                
+
                 TempData["Success"] = $"Successfully loaded table:{TableId}.";
                 return View(table);
             }
@@ -129,32 +128,50 @@ namespace LAB2_HT2024.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateTable(UpdateTableViewModel updateTableViewModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(updateTableViewModel);
+            }
+
             var token = HttpContext.Request.Cookies["JwtToken"];
 
             if (string.IsNullOrEmpty(token))
             {
-
                 TempData["Error"] = "Unauthorized: No token found.";
                 return RedirectToAction("Index");
-
             }
-            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            var json = JsonConvert.SerializeObject(updateTableViewModel);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await _client.PutAsync($"{baseUrl}api/table/update/{updateTableViewModel}", content);
-            var responsecontent = await response.Content.ReadAsStringAsync();
-            var updatedTableJson = JsonConvert.DeserializeObject<UpdateTableViewModel>(responsecontent);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                TempData["Success"] = $"Successfully updated TableId: {updatedTableJson.TableId}";
-                return RedirectToAction("Index");
+                _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var json = JsonConvert.SerializeObject(updateTableViewModel);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await _client.PutAsync($"{baseUrl}api/table/update/{updateTableViewModel.TableId}", content);
+
+                var responsecontent = await response.Content.ReadAsStringAsync();
+                var updatedTableJson = JsonConvert.DeserializeObject<UpdateTableViewModel>(responsecontent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["Success"] = $"Successfully updated TableId: {updatedTableJson.TableId}";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    TempData["Error"] = $"Failed to update table with id:{updatedTableJson.TableId}, status:{response.StatusCode} and details:{responsecontent}.";
+                    return RedirectToAction("UpdateTable", new { TableId = updateTableViewModel.TableId });
+                }
             }
-            else
+            catch (HttpRequestException ex)
             {
-                TempData["Error"] = $"Failed to update table with id:{updatedTableJson.TableId}, status:{response.StatusCode} and details:{responsecontent}.";
-                return RedirectToAction("UpdateTable", new { TableId = updateTableViewModel.TableId });
+                ModelState.AddModelError("", $"Network error: {ex.Message}");
+                return View(updateTableViewModel);
+            }
+            catch (JsonException ex)
+            {
+                ModelState.AddModelError("", $"Error processing response: {ex.Message}");
+                return View(updateTableViewModel);
             }
         }
 
@@ -206,7 +223,6 @@ namespace LAB2_HT2024.Controllers
                 ModelState.AddModelError("", $"Error processing response: {ex.Message}");
                 return View(addTableViewModel);
             }
-
         }
     }
 }
